@@ -1,6 +1,5 @@
 const Patches = require('Patches');
 const Reactive = require('Reactive');
-const Diagnostics = require('Diagnostics');
 
 const BOOL = Patches.inputs.setBoolean;
 
@@ -35,12 +34,12 @@ const timeline = [
         key: 'eyesVisible',
         value: () => true,
     },
-    // { 
-    //     t: 6,
-    //     action: Patches.inputs.setPulse,
-    //     key: 'eyesTrigger',
-    //     value: Reactive.once,
-    // },
+    { 
+        t: 6,
+        action: Patches.inputs.setPulse,
+        key: 'eyesTrigger',
+        value: () => Reactive.once(),
+    },
     {
         t: 9,
         action: Patches.inputs.setBoolean,
@@ -135,12 +134,8 @@ const timeline = [
 
 var index = 0;
 
-(async () => {
-
-    Patches.inputs.setBoolean
-
-    const etPatch = await Patches.outputs.getScalar('et');
-    etPatch.monitor().subscribe(event => {
+Patches.outputs.getScalar('et').then(patch => {
+    patch.monitor().subscribe(event => {
         const et = event.newValue;
         while (et > timeline[index].t) {
             const item = timeline[index];
@@ -148,4 +143,4 @@ var index = 0;
             ++index;
         }
     });
-})();
+});
