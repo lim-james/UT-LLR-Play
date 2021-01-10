@@ -1,8 +1,6 @@
 const Patches = require('Patches');
 const Reactive = require('Reactive');
 
-const BOOL = Patches.inputs.setBoolean;
-
 const timeline = [
     { // burst animation appear
         t: 0,
