@@ -4,7 +4,7 @@ const Materials = require('Materials');
 const Reactive = require('Reactive');
 const Diagnostics = require('Diagnostics');
 
-const bt = 0.25;
+const bt = 0.5;
 const timecodes = {
     LEFT: {
         isCollected: false,

@@ -87,6 +87,12 @@ const timeline = [
         value: () => true,
     },
     {
+        t: 13,
+        action: Patches.inputs.setBoolean,
+        key: 'bottomBorderVisible',
+        value: () => true,
+    },
+    {
         t: 14,
         action: Patches.inputs.setBoolean,
         key: 'burstVisible',
@@ -128,9 +134,21 @@ const timeline = [
         key: 'burstVisible',
         value: () => false,
     },
+    {
+        t: 19,
+        action: Patches.inputs.setBoolean,
+        key: 'bottomBorderVisible',
+        value: () => false,
+    },
 ];
 
 var index = 0;
+
+Patches.outputs.getPulse('onStart').then(patch => {
+    patch.subscribe(() => {
+        index = 0;
+    });
+});
 
 Patches.outputs.getScalar('et').then(patch => {
     patch.monitor().subscribe(event => {
