@@ -2,8 +2,9 @@ const Patches = require('Patches');
 const Scene = require('Scene');
 const Materials = require('Materials');
 const Reactive = require('Reactive');
+const Diagnostics = require('Diagnostics');
 
-const bt = 0.05;
+const bt = 0.1;
 const timecodes = {
     LEFT: {
         isCollected: false,
@@ -62,10 +63,22 @@ const getTriggerCallback = (direction, etPatch) => {
 };
 
 const getCompletionCallback = (direction, etPatch) => {
-    return () => {
-        ++timecodes[direction].index;
-        startItem(direction, etPatch.pinLastValue());
-    };
+    if (direction == 'RIGHT') {
+        return () => {
+            ++timecodes[direction].index;
+            if (timecodes[direction].index >= timecodes[direction].times.length) {
+                Diagnostics.log('completed');
+                Patches.inputs.setPulse('onGameplayEnd', Reactive.once());
+            } else {
+                startItem(direction, etPatch.pinLastValue());
+            }
+        };
+    } else {
+        return () => {
+            ++timecodes[direction].index;
+            startItem(direction, etPatch.pinLastValue());
+        };
+    }
 };
 
 (async () => {
