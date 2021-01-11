@@ -4,7 +4,7 @@ const Materials = require('Materials');
 const Reactive = require('Reactive');
 const Diagnostics = require('Diagnostics');
 
-const bt = 0.1;
+const bt = 0.25;
 const timecodes = {
     LEFT: {
         isCollected: false,
@@ -105,6 +105,9 @@ const getCompletionCallback = (direction, etPatch) => {
 
     Patches.outputs.getPulse('onStart').then(patch => {
         patch.subscribe(() => {
+            timecodes.LEFT.index = 0;
+            timecodes.UP.index = 0;
+            timecodes.RIGHT.index = 0;
             score = 0;
             Patches.inputs.setString('score', score.toString());
             
