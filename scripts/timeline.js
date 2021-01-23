@@ -1,4 +1,5 @@
 const Patches = require('Patches');
+const Time = require('Time');
 const Reactive = require('Reactive');
 
 const timeline = [
@@ -142,16 +143,43 @@ const timeline = [
     },
 ];
 
+var countdown = 3;
 var index = 0;
+var hasGameStarted = false;
+
+const updateCounter = i => {
+    Patches.inputs.setString('counterText', i.toString());
+    Patches.inputs.setPulse('counterPulse', Reactive.once());
+};
+
+const startGame = () => {
+    Patches.inputs.setPulse('onGameStart', Reactive.once());
+    hasGameStarted = true;
+};
 
 Patches.outputs.getPulse('onStart').then(patch => {
     patch.subscribe(() => {
+        Patches.inputs.setBoolean('counterVisible', true);
+        countdown = 3;
+        updateCounter(countdown);
+        Time.setInterval(() => {
+            --countdown;
+            if (countdown == 0) {
+                Patches.inputs.setBoolean('counterVisible', false);
+                startGame();
+                Time.clearInterval(this);
+            } else {
+                updateCounter(countdown);
+            }
+        }, 1000); 
         index = 0;
     });
 });
 
 Patches.outputs.getScalar('et').then(patch => {
     patch.monitor().subscribe(event => {
+        if (!hasGameStarted) return;
+
         const et = event.newValue;
         while (et > timeline[index].t) {
             const item = timeline[index];

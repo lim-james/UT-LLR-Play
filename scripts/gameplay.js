@@ -9,7 +9,7 @@ const timecodes = {
     LEFT: {
         isCollected: false,
         index: 0,
-        times: [2.24, 11.31, 15.12],
+        times: [4.4, 7.02, 9.17, 13.99, 16.59, 16.87],
         sceneObject: null,
         materials: {
             original: null,
@@ -19,7 +19,7 @@ const timecodes = {
     UP: {
         isCollected: false,
         index: 0,
-        times: [4.34, 12.95],
+        times: [7.56, 11.31, 17.74],
         sceneObject: null,
         materials: {
             original: null,
@@ -29,7 +29,7 @@ const timecodes = {
     RIGHT: {
         isCollected: false,
         index: 0,
-        times: [6.75, 17.65],
+        times: [2.2, 6.5, 8.64, 9.70, 13.45, 16.13, 16.40],
         sceneObject: null,
         materials: {
             original: null,
