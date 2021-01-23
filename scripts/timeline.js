@@ -4,139 +4,96 @@ const Reactive = require('Reactive');
 
 const timeline = [
     { // burst animation appear
-        t: 0,
+        t: 4.5,
         action: Patches.inputs.setBoolean,
         key: 'burstVisible',
         value: () => true,
     },
     { // burst animation disappear
-        t: 3,
+        t: 6,
         action: Patches.inputs.setBoolean,
         key: 'burstVisible',
         value: () => false,
     },
-    { // flower appear
-        t: 3,
+    {
+        t: 7.58,
         action: Patches.inputs.setBoolean,
-        key: 'flowerVisible',
+        key: 'burstVisible',
         value: () => true,
     },
-    { // flower disappear
-        t: 6,
+    {
+        t: 8.15,
         action: Patches.inputs.setBoolean,
-        key: 'flowerVisible',
+        key: 'burstVisible',
         value: () => false,
     },
+
     { // eyes appear
-        t: 6,
+        t: 9.75,
         action: Patches.inputs.setBoolean,
         key: 'eyesVisible',
         value: () => true,
     },
     { 
-        t: 6,
+        t: 9.75,
         action: Patches.inputs.setPulse,
         key: 'eyesTrigger',
         value: () => Reactive.once(),
     },
     {
-        t: 9,
+        t: 11.00,
         action: Patches.inputs.setBoolean,
-        key: 'burstVisible',
+        key: 'eyesVisible',
+        value: () => false,
+    },
+
+    { // flower appear
+        t: 11.32,
+        action: Patches.inputs.setBoolean,
+        key: 'flowerVisible',
         value: () => true,
     },
+    { // flower disappear
+        t: 13.00,
+        action: Patches.inputs.setBoolean,
+        key: 'flowerVisible',
+        value: () => false,
+    },
+
     {
-        t: 9,
+        t: 14.00,
         action: Patches.inputs.setBoolean,
         key: 'sunburstVisible',
         value: () => true,
     },
     {
-        t: 10,
-        action: Patches.inputs.setBoolean,
-        key: 'burstVisible',
-        value: () => false,
-    },
-    {
-        t: 10,
-        action: Patches.inputs.setBoolean,
-        key: 'eyesVisible',
-        value: () => false,
-    },
-    {
-        t: 11,
-        action: Patches.inputs.setBoolean,
-        key: 'burstVisible',
-        value: () => true,
-    },
-    {
-        t: 11,
+        t: 14.05,
         action: Patches.inputs.setBoolean,
         key: 'necklaceVisible',
         value: () => true,
     },
+
     {
-        t: 12,
+        t: 15.00,
         action: Patches.inputs.setBoolean,
-        key: 'burstVisible',
+        key: 'sunburstVisible',
         value: () => false,
     },
     {
-        t: 13,
+        t: 15,
         action: Patches.inputs.setBoolean,
-        key: 'burstVisible',
-        value: () => true,
+        key: 'necklaceVisible',
+        value: () => false,
     },
+
     {
-        t: 13,
+        t: 15.05,
         action: Patches.inputs.setBoolean,
         key: 'bottomBorderVisible',
         value: () => true,
     },
     {
-        t: 14,
-        action: Patches.inputs.setBoolean,
-        key: 'burstVisible',
-        value: () => false,
-    },
-    {
-        t: 15,
-        action: Patches.inputs.setBoolean,
-        key: 'burstVisible',
-        value: () => true,
-    },
-    {
-        t: 15,
-        action: Patches.inputs.setBoolean,
-        key: 'sunburstVisible',
-        value: () => false,
-    },
-    {
-        t: 15,
-        action: Patches.inputs.setBoolean,
-        key: 'necklaceVisible',
-        value: () => false,
-    },
-    {
-        t: 16,
-        action: Patches.inputs.setBoolean,
-        key: 'burstVisible',
-        value: () => false,
-    },
-    {
-        t: 18,
-        action: Patches.inputs.setBoolean,
-        key: 'burstVisible',
-        value: () => true,
-    },
-    {
-        t: 19,
-        action: Patches.inputs.setBoolean,
-        key: 'burstVisible',
-        value: () => false,
-    },
-    {
-        t: 19,
+        t: 16.50,
         action: Patches.inputs.setBoolean,
         key: 'bottomBorderVisible',
         value: () => false,
