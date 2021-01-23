@@ -155,12 +155,15 @@ const updateCounter = i => {
 const startGame = () => {
     Patches.inputs.setPulse('onGameStart', Reactive.once());
     hasGameStarted = true;
+    Patches.inputs.setBoolean('isPlaying', hasGameStarted);
 };
 
 Patches.outputs.getPulse('onStart').then(patch => {
     patch.subscribe(() => {
         Patches.inputs.setBoolean('counterVisible', true);
         countdown = 3;
+        hasGameStarted = false;
+        Patches.inputs.setBoolean('isPlaying', hasGameStarted);
         updateCounter(countdown);
         Time.setInterval(() => {
             --countdown;

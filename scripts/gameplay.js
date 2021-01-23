@@ -69,6 +69,7 @@ const getCompletionCallback = (direction, etPatch) => {
             if (timecodes[direction].index >= timecodes[direction].times.length) {
                 Diagnostics.log('completed');
                 Patches.inputs.setPulse('onGameplayEnd', Reactive.once());
+                Patches.inputs.setBoolean('isPlaying', false);
             } else {
                 startItem(direction, etPatch.pinLastValue());
             }
@@ -103,7 +104,7 @@ const getCompletionCallback = (direction, etPatch) => {
 
     const etPatch = await Patches.outputs.getScalar('et');
 
-    Patches.outputs.getPulse('onStart').then(patch => {
+    Patches.outputs.getPulse('startGame').then(patch => {
         patch.subscribe(() => {
             timecodes.LEFT.index = 0;
             timecodes.UP.index = 0;
