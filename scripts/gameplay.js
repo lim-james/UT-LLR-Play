@@ -83,7 +83,7 @@ const getTriggerCallback = (direction, etPatch) => {
 
         beats.forEach((item, index) => {
             if (!item.isCollected && Math.abs(item.times[item.index] - et) <= bt) {
-                timecodes[direction].beats[index].isCollection = true;
+                timecodes[direction].beats[index].isCollected = true;
                 timecodes[direction].beats[index].sceneObject.material = type.materials.hit;
                 ++score;
                 Patches.inputs.setString('score', score.toString());
@@ -95,19 +95,21 @@ const getTriggerCallback = (direction, etPatch) => {
 const getCompletionCallback = (direction, index, etPatch) => {
     if (direction == 'UP') {
         return () => {
-            ++timecodes[direction].index;
-            if (timecodes[direction].index >= timecodes[direction].times.length) {
+            Diagnostics.log(direction + ' (' + index + ') completed');
+            ++timecodes[direction].beats[index].index;
+            if (timecodes[direction].beats[index].index >= timecodes[direction].beats[index].times.length) {
                 Diagnostics.log('completed');
                 Patches.inputs.setPulse('onGameplayEnd', Reactive.once());
                 Patches.inputs.setBoolean('isPlaying', false);
             } else {
-                startItem(direction, etPatch.pinLastValue());
+                startItem(direction, index, etPatch.pinLastValue());
             }
         };
     } else {
         return () => {
-            ++timecodes[direction].index;
-            startItem(direction, etPatch.pinLastValue());
+            Diagnostics.log(direction + ' (' + index + ') completed');
+            ++timecodes[direction].beats[index].index;
+            startItem(direction, index, etPatch.pinLastValue());
         };
     }
 };

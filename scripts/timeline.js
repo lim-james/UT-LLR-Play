@@ -122,12 +122,12 @@ Patches.outputs.getPulse('onStart').then(patch => {
         hasGameStarted = false;
         Patches.inputs.setBoolean('isPlaying', hasGameStarted);
         updateCounter(countdown);
-        Time.setInterval(() => {
+        const interval = Time.setInterval(() => {
             --countdown;
             if (countdown == 0) {
                 Patches.inputs.setBoolean('counterVisible', false);
                 startGame();
-                Time.clearInterval(this);
+                Time.clearInterval(interval);
             } else {
                 updateCounter(countdown);
             }
