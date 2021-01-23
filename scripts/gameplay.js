@@ -7,63 +7,93 @@ const Diagnostics = require('Diagnostics');
 const bt = 0.5;
 const timecodes = {
     LEFT: {
-        isCollected: false,
-        index: 0,
-        times: [4.4, 7.02, 9.17, 13.99, 16.59, 16.87],
-        sceneObject: null,
         materials: {
             original: null,
             hit: null,
         },
+        beats: [
+            {
+                isCollected: false,
+                index: 0,
+                times: [4.4, 9.17, 16.59],
+                sceneObject: null,
+            },
+            {
+                isCollected: false,
+                index: 0,
+                times: [7.02, 13.99, 16.87],
+                sceneObject: null,
+            }
+        ]
     },
+
     UP: {
-        isCollected: false,
-        index: 0,
-        times: [7.56, 11.31, 17.74],
-        sceneObject: null,
         materials: {
             original: null,
             hit: null,
         },
+        beats: [
+            {
+                isCollected: false,
+                index: 0,
+                times: [7.56, 11.31, 17.74],
+                sceneObject: null,
+            }
+        ]
     },
+
     RIGHT: {
-        isCollected: false,
-        index: 0,
-        times: [2.2, 6.5, 8.64, 9.70, 13.45, 16.13, 16.40],
-        sceneObject: null,
         materials: {
             original: null,
             hit: null,
         },
+        beats: [
+            {
+                isCollected: false,
+                index: 0,
+                times: [2.2, 8.64, 13.45, 16.40],
+                sceneObject: null,
+            },
+            {
+                isCollected: false,
+                index: 0,
+                times: [6.5, 9.70, 16.13],
+                sceneObject: null,
+            },
+        ],
     },
 };
 
 var score = 0;
 
-const startItem = (direction, et) => {
-    const item = timecodes[direction];
+const startItem = (direction, index, et) => {
+    const type = timecodes[direction];
+    const item = type.beats[index];
     item.isCollected = false;
-    item.sceneObject.material = item.materials.original;
-    Patches.inputs.setScalar('duration_' + direction, (item.times[item.index] - et) * 2);
-    Patches.inputs.setPulse('beatStart_' + direction, Reactive.once());
+    item.sceneObject.material = type.materials.original;
+    Patches.inputs.setScalar('duration_' + direction + '_' + index, (item.times[item.index] - et));
+    Patches.inputs.setPulse('beatStart_' + direction + '_' + index, Reactive.once());
 };
 
 const getTriggerCallback = (direction, etPatch) => {
     return () => {
         const et = etPatch.pinLastValue();
-        const item = timecodes[direction];
+        const type = timecodes[direction];
+        const beats = type.beats;
 
-        if (!item.isCollected && Math.abs(item.times[item.index] - et) <= bt) {
-            timecodes[direction].isCollection = true;
-            timecodes[direction].sceneObject.material = item.materials.hit;
-            ++score;
-            Patches.inputs.setString('score', score.toString());
-        }
+        beats.forEach((item, index) => {
+            if (!item.isCollected && Math.abs(item.times[item.index] - et) <= bt) {
+                timecodes[direction].beats[index].isCollection = true;
+                timecodes[direction].beats[index].sceneObject.material = type.materials.hit;
+                ++score;
+                Patches.inputs.setString('score', score.toString());
+            }
+        });
     }
 };
 
-const getCompletionCallback = (direction, etPatch) => {
-    if (direction == 'RIGHT') {
+const getCompletionCallback = (direction, index, etPatch) => {
+    if (direction == 'UP') {
         return () => {
             ++timecodes[direction].index;
             if (timecodes[direction].index >= timecodes[direction].times.length) {
@@ -82,28 +112,35 @@ const getCompletionCallback = (direction, etPatch) => {
     }
 };
 
+const subscribeCompletion = (direction, index, etPatch) => {
+    Patches.outputs.getPulse('completion_' + direction + '_' + index).then(
+        patch => patch.subscribe(getCompletionCallback(direction, index, etPatch))
+    );
+};
+
 (async () => {
     const basebeatBlueMat = await Materials.findFirst('basebeat_blue_mat');
     const basebeatRedMat = await Materials.findFirst('basebeat_red_mat');
     const onHitBlueMat = await Materials.findFirst('onHit_blue_mat');
     const onHitRedMat = await Materials.findFirst('onHit_red_mat');
 
+    const root = Scene.root;
+    // left
     timecodes.LEFT.materials.original = basebeatBlueMat;
     timecodes.LEFT.materials.hit = onHitBlueMat;
-
+    timecodes.LEFT.beats[0].sceneObject = await root.findFirst('basebeatLeft0');
+    timecodes.LEFT.beats[1].sceneObject = await root.findFirst('basebeatLeft1');
+    // up
     timecodes.UP.materials.original = basebeatRedMat;
     timecodes.UP.materials.hit = onHitRedMat;
-
+    timecodes.UP.beats[0].sceneObject = await root.findFirst('basebeatMiddle0');
+    // right
     timecodes.RIGHT.materials.original = basebeatBlueMat;
     timecodes.RIGHT.materials.hit = onHitBlueMat;
-
-    const root = Scene.root;
-    timecodes.LEFT.sceneObject = await root.findFirst('basebeatLeft');
-    timecodes.UP.sceneObject = await root.findFirst('basebeatMiddle');
-    timecodes.RIGHT.sceneObject = await root.findFirst('basebeatRight');
+    timecodes.RIGHT.beats[0].sceneObject = await root.findFirst('basebeatRight0');
+    timecodes.RIGHT.beats[1].sceneObject = await root.findFirst('basebeatRight1');
 
     const etPatch = await Patches.outputs.getScalar('et');
-
     Patches.outputs.getPulse('startGame').then(patch => {
         patch.subscribe(() => {
             timecodes.LEFT.index = 0;
@@ -112,31 +149,31 @@ const getCompletionCallback = (direction, etPatch) => {
             score = 0;
             Patches.inputs.setString('score', score.toString());
             
-            startItem('LEFT', 0);
-            startItem('UP', 0);
-            startItem('RIGHT', 0);
+            startItem('LEFT', 0, 0);
+            startItem('LEFT', 1, 0);
+            startItem('UP', 0, 0);
+            startItem('RIGHT', 0, 0);
+            startItem('RIGHT', 1, 0);
         });
     });
 
     // triggers
+    Patches.outputs.getPulse('onLeft').then(
+        patch => patch.subscribe(getTriggerCallback('LEFT', etPatch))
+    );
 
-    const leftTrigger = await Patches.outputs.getPulse('onLeft');
-    leftTrigger.subscribe(getTriggerCallback('LEFT', etPatch));
+    Patches.outputs.getPulse('onUp').then(
+        patch => patch.subscribe(getTriggerCallback('UP', etPatch))
+    );
 
-    const rightTrigger = await Patches.outputs.getPulse('onRight');
-    rightTrigger.subscribe(getTriggerCallback('RIGHT', etPatch));
-
-    const upTrigger = await Patches.outputs.getPulse('onUp');
-    upTrigger.subscribe(getTriggerCallback('UP', etPatch));
+    Patches.outputs.getPulse('onRight').then(
+        patch => patch.subscribe(getTriggerCallback('RIGHT', etPatch))
+    );
 
     // completion
-
-    const leftCompletion = await Patches.outputs.getPulse('leftCompletion');
-    leftCompletion.subscribe(getCompletionCallback('LEFT', etPatch));
-
-    const upCompletion = await Patches.outputs.getPulse('upCompletion');
-    upCompletion.subscribe(getCompletionCallback('UP', etPatch));
-
-    const rightCompletion = await Patches.outputs.getPulse('rightCompletion');
-    rightCompletion.subscribe(getCompletionCallback('RIGHT', etPatch));
+    subscribeCompletion('LEFT', 0, etPatch);
+    subscribeCompletion('LEFT', 1, etPatch);
+    subscribeCompletion('UP', 0, etPatch);
+    subscribeCompletion('RIGHT', 0, etPatch);
+    subscribeCompletion('RIGHT', 1, etPatch);
 })();

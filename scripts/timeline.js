@@ -141,7 +141,7 @@ Patches.outputs.getScalar('et').then(patch => {
         if (!hasGameStarted) return;
 
         const et = event.newValue;
-        while (et > timeline[index].t) {
+        while (index < timeline.length && et > timeline[index].t) {
             const item = timeline[index];
             item.action(item.key, item.value());
             ++index;
