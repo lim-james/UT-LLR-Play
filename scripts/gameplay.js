@@ -59,7 +59,7 @@ const timecodes = {
                 isStarted: false,
                 isCollected: false,
                 index: 0,
-                times: [2.2, 8.64, 13.45, 16.40],
+                times: [2.2, 8.64, 13.45],
                 sceneObject: null,
             },
             {
@@ -67,7 +67,7 @@ const timecodes = {
                 isStarted: false,
                 isCollected: false,
                 index: 0,
-                times: [6.5, 9.70, 16.13],
+                times: [6.5, 16.13],
                 sceneObject: null,
             },
         ],
